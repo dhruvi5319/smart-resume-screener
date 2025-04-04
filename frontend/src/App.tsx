@@ -34,34 +34,42 @@ const App = () => {
     setIsLoading(false);
   }, []);
 
-  const handleLogin = (email: string, password: string) => {
-    // This is a mock login for demo purposes
-    // In a real app, this would make an API call to authenticate
-    
-    const newUser: User = {
-      id: "user-1",
-      email,
-      name: email.split("@")[0],
-      token: "mock-jwt-token",
+  const handleLogin = async (email: string, password: string) => {
+    const response = await fetch("http://localhost:8080/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+  
+    if (!response.ok) {
+      throw new Error("Login failed");
+    }
+  
+    const data = await response.json();
+    const user = {
+      id: data.id,
+      email: data.email,
+      name: data.name,
+      token: data.token,
     };
-    
-    setUser(newUser);
-    localStorage.setItem("user", JSON.stringify(newUser));
+  
+    setUser(user);
+    localStorage.setItem("user", JSON.stringify(user));
   };
 
-  const handleRegister = (name: string, email: string, password: string) => {
-    // This is a mock registration for demo purposes
-    // In a real app, this would make an API call to register the user
-    
-    const newUser: User = {
-      id: "user-" + Date.now(),
-      email,
-      name,
-      token: "mock-jwt-token",
-    };
-    
-    setUser(newUser);
-    localStorage.setItem("user", JSON.stringify(newUser));
+  const handleRegister = async (name: string, email: string, password: string) => {
+    const response = await fetch("http://localhost:8080/api/auth/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, password }),
+    });
+  
+    if (!response.ok) {
+      throw new Error("Registration failed");
+    }
+  
+    // optionally auto-login after registration
+    await handleLogin(email, password);
   };
 
   const handleLogout = () => {

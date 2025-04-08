@@ -19,6 +19,7 @@ const queryClient = new QueryClient();
 const App = () => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const isAuthenticated = !!user;
 
   useEffect(() => {
     // Check for saved user data in localStorage
@@ -87,7 +88,8 @@ const App = () => {
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          {user && <Navbar isAuthenticated={!!user} onLogout={handleLogout} />}
+          {user && <Navbar user={user} isAuthenticated={isAuthenticated} onLogout={handleLogout} />
+        }
           <Routes>
             <Route path="/" element={<Index />} />
             <Route 
@@ -99,13 +101,15 @@ const App = () => {
             <Route 
               path="/login" 
               element={
-                user ? <Navigate to="/dashboard" replace /> : <Login onLogin={handleLogin} />
+                user ? <Navigate to="/dashboard" replace /> : <Login onLogin={(userData) => handleLogin(userData.email, userData.password)} />
+
               } 
             />
             <Route 
               path="/register" 
               element={
-                user ? <Navigate to="/dashboard" replace /> : <Register onRegister={handleRegister} />
+                user ? <Navigate to="/dashboard" replace /> : <Register onRegister={(userData) => handleRegister(userData.name, userData.email, userData.password)} />
+
               } 
             />
             <Route path="*" element={<NotFound />} />

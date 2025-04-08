@@ -4,6 +4,7 @@ export interface User {
   email: string;
   name: string;
   token?: string;
+  password?: string;
 }
 
 export interface Resume {
@@ -16,7 +17,7 @@ export interface Resume {
 }
 
 export interface JobDescription {
-  id: string;
+  id: number;
   title: string;
   department: string;
   description: string;

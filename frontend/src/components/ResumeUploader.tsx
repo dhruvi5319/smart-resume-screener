@@ -1,4 +1,4 @@
-
+import { uploadResume } from "@/services/api";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useState, useRef, useCallback } from "react";
@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { JobDescription } from "@/types";
 
 interface ResumeUploaderProps {
-  onUpload: (file: File, jobDescriptionId: string) => void;
+  onUpload: (file: File, jobDescriptionId: number) => void;
   jobDescriptions?: JobDescription[];
 }
 
@@ -29,22 +29,18 @@ const ResumeUploader = ({ onUpload, jobDescriptions = [] }: ResumeUploaderProps)
     setIsDragging(false);
   }, []);
 
-  const handleDrop = useCallback(
-    (e: React.DragEvent<HTMLDivElement>) => {
-      e.preventDefault();
-      setIsDragging(false);
+  const handleDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragging(false);
 
-      const files = e.dataTransfer.files;
-      if (files.length > 0) {
-        const file = files[0];
-        validateAndSetFile(file);
-      }
-    },
-    []
-  );
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      const file = files[0];
+      validateAndSetFile(file);
+    }
+  }, []);
 
   const validateAndSetFile = (file: File) => {
-    // Check file type
     const validTypes = ["application/pdf", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"];
     if (!validTypes.includes(file.type)) {
       toast({
@@ -55,7 +51,6 @@ const ResumeUploader = ({ onUpload, jobDescriptions = [] }: ResumeUploaderProps)
       return;
     }
 
-    // Check file size (5MB max)
     if (file.size > 5 * 1024 * 1024) {
       toast({
         title: "File too large",
@@ -75,23 +70,33 @@ const ResumeUploader = ({ onUpload, jobDescriptions = [] }: ResumeUploaderProps)
     }
   };
 
-  const handleUploadClick = () => {
-    if (selectedFile) {
-      if (!selectedJobId && jobDescriptions.length > 0) {
-        toast({
-          title: "Select a job description",
-          description: "Please select a job description to compare the resume against.",
-          variant: "destructive",
-        });
-        return;
-      }
+  const handleUploadClick = async () => {
+    if (!selectedFile) return;
 
-      onUpload(selectedFile, selectedJobId);
+    if (!selectedJobId && jobDescriptions.length > 0) {
+      toast({
+        title: "Select a job description",
+        description: "Please select a job description to compare the resume against.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const candidate = await uploadResume(selectedFile, Number(selectedJobId));
+      onUpload(selectedFile, Number(selectedJobId)); // UI update
       toast({
         title: "Resume uploaded",
-        description: `${selectedFile.name} has been uploaded successfully.`,
+        description: `${selectedFile.name} uploaded successfully.`,
       });
       setSelectedFile(null);
+    } catch (error) {
+      console.error("Upload failed:", error);
+      toast({
+        title: "Upload failed",
+        description: "Something went wrong while uploading the resume.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -119,20 +124,6 @@ const ResumeUploader = ({ onUpload, jobDescriptions = [] }: ResumeUploaderProps)
           />
           {selectedFile ? (
             <div className="text-center">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-10 w-10 mx-auto text-success-500 mb-2"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
               <p className="font-medium text-slate-800">{selectedFile.name}</p>
               <p className="text-sm text-gray-500 mt-1">
                 {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
@@ -140,29 +131,13 @@ const ResumeUploader = ({ onUpload, jobDescriptions = [] }: ResumeUploaderProps)
             </div>
           ) : (
             <>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-12 w-12 text-indigo-400 mb-3"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                />
-              </svg>
               <p className="font-medium text-slate-800">Drag and drop resume here</p>
-              <p className="text-sm text-gray-500 mt-1">
-                or click to browse (PDF, DOCX)
-              </p>
+              <p className="text-sm text-gray-500 mt-1">or click to browse (PDF, DOCX)</p>
             </>
           )}
         </div>
 
-        {jobDescriptions && jobDescriptions.length > 0 && (
+        {jobDescriptions.length > 0 && (
           <div className="mt-6">
             <Label htmlFor="job-description" className="text-indigo-700 mb-2 block">
               Select a Job Description
@@ -173,9 +148,9 @@ const ResumeUploader = ({ onUpload, jobDescriptions = [] }: ResumeUploaderProps)
               </SelectTrigger>
               <SelectContent>
                 {jobDescriptions.map((job) => (
-                  <SelectItem key={job.id} value={job.id}>
-                    {job.title} - {job.department}
-                  </SelectItem>
+                  <SelectItem key={job.id} value={String(job.id)}>
+                  {job.title} - {job.department}
+                </SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -184,10 +159,7 @@ const ResumeUploader = ({ onUpload, jobDescriptions = [] }: ResumeUploaderProps)
 
         {selectedFile && (
           <div className="mt-6 flex justify-end">
-            <Button 
-              onClick={handleUploadClick}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white"
-            >
+            <Button onClick={handleUploadClick} className="bg-indigo-600 hover:bg-indigo-700 text-white">
               Upload Resume
             </Button>
           </div>

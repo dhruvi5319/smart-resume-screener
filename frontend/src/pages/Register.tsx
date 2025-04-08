@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -6,9 +5,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
+import { User } from "@/types";
 
 interface RegisterProps {
-  onRegister: (name: string, email: string, password: string) => void;
+  onRegister: (userData: User) => void;
 }
 
 const Register = ({ onRegister }: RegisterProps) => {
@@ -22,7 +22,7 @@ const Register = ({ onRegister }: RegisterProps) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (password !== confirmPassword) {
       toast({
         title: "Passwords don't match",
@@ -31,19 +31,33 @@ const Register = ({ onRegister }: RegisterProps) => {
       });
       return;
     }
-    
+
     setIsLoading(true);
 
     try {
-      // In a real app, this would be an API call
-      // For now, we'll simulate a successful registration
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      onRegister(name, email, password);
+      const response = await fetch("http://localhost:8080/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Registration failed");
+      }
+
+      const loginResponse = await fetch("http://localhost:8080/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await loginResponse.json();
+      onRegister(data);
       navigate("/dashboard");
     } catch (error) {
       toast({
         title: "Registration failed",
-        description: "There was an error creating your account. Please try again.",
+        description: "There was an error creating your account.",
         variant: "destructive",
       });
     } finally {
@@ -62,55 +76,25 @@ const Register = ({ onRegister }: RegisterProps) => {
         <Card>
           <CardHeader>
             <CardTitle>Create an account</CardTitle>
-            <CardDescription>
-              Join our platform to start analyzing resumes with AI
-            </CardDescription>
+            <CardDescription>Join our platform to start analyzing resumes with AI</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="name">Full Name</Label>
-                <Input
-                  id="name"
-                  placeholder="John Doe"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required
-                />
+                <Input id="name" value={name} onChange={(e) => setName(e.target.value)} required />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="you@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
+                <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  minLength={8}
-                />
+                <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="confirmPassword">Confirm Password</Label>
-                <Input
-                  id="confirmPassword"
-                  type="password"
-                  placeholder="••••••••"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  required
-                />
+                <Input id="confirmPassword" type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
               </div>
               <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading ? "Creating account..." : "Create account"}
@@ -119,10 +103,7 @@ const Register = ({ onRegister }: RegisterProps) => {
           </CardContent>
           <CardFooter>
             <p className="text-center text-sm text-gray-600 w-full">
-              Already have an account?{" "}
-              <Link to="/login" className="font-medium text-brand-600 hover:text-brand-500">
-                Sign in
-              </Link>
+              Already have an account? <Link to="/login" className="font-medium text-brand-600 hover:text-brand-500">Sign in</Link>
             </p>
           </CardFooter>
         </Card>

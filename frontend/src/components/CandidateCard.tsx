@@ -1,9 +1,15 @@
-
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Candidate } from "@/types";
+import { useNavigate } from "react-router-dom";
 
 interface CandidateCardProps {
   candidate: Candidate;
@@ -11,12 +17,19 @@ interface CandidateCardProps {
 }
 
 const CandidateCard = ({ candidate, onViewDetails }: CandidateCardProps) => {
-  // Calculate match score color
+  const navigate = useNavigate();
+  const handleViewDetails = () => {
+    navigate(`/candidate/${candidate.id}`);
+  };
+
   const getScoreColor = (score: number) => {
     if (score >= 80) return "text-success-600";
     if (score >= 60) return "text-warning-600";
     return "text-destructive";
   };
+
+  const skills = candidate.skills ?? [];
+  const strengths = candidate.strengths ?? [];
 
   return (
     <Card className="h-full flex flex-col">
@@ -34,28 +47,28 @@ const CandidateCard = ({ candidate, onViewDetails }: CandidateCardProps) => {
             <h4 className="text-sm font-medium text-gray-500">Education</h4>
             <p className="mt-1">{candidate.education}</p>
           </div>
-          
+
           <div>
             <h4 className="text-sm font-medium text-gray-500">Key Skills</h4>
             <div className="flex flex-wrap gap-2 mt-2">
-              {candidate.skills.slice(0, 5).map((skill) => (
+              {skills.slice(0, 5).map((skill) => (
                 <Badge key={skill.name} variant={skill.isMatch ? "default" : "outline"}>
                   {skill.name}
                 </Badge>
               ))}
-              {candidate.skills.length > 5 && (
-                <Badge variant="secondary">+{candidate.skills.length - 5}</Badge>
+              {skills.length > 5 && (
+                <Badge variant="secondary">+{skills.length - 5}</Badge>
               )}
             </div>
           </div>
-          
+
           <div>
             <h4 className="text-sm font-medium text-gray-500">Strengths</h4>
             <ul className="mt-1 text-sm pl-5 list-disc">
-              {candidate.strengths.slice(0, 2).map((strength, index) => (
+              {strengths.slice(0, 2).map((strength, index) => (
                 <li key={index}>{strength}</li>
               ))}
-              {candidate.strengths.length > 2 && <li>...</li>}
+              {strengths.length > 2 && <li>...</li>}
             </ul>
           </div>
         </div>
@@ -63,7 +76,7 @@ const CandidateCard = ({ candidate, onViewDetails }: CandidateCardProps) => {
       <Separator />
       <CardFooter className="pt-4">
         <Button
-          onClick={() => onViewDetails(candidate)}
+          onClick={handleViewDetails}
           className="w-full"
           variant="outline"
         >

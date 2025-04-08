@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -7,9 +6,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { JobDescription } from "@/types";
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
+import { uploadResume, saveJobDescription } from "@/services/api";
 
 interface JobDescriptionFormProps {
-  onSubmit: (jobDescription: Omit<JobDescription, "id" | "createdAt">) => void;
+  onSubmit: (job: Omit<JobDescription, "id" | "createdAt">) => void;
 }
 
 const JobDescriptionForm = ({ onSubmit }: JobDescriptionFormProps) => {
@@ -20,7 +20,16 @@ const JobDescriptionForm = ({ onSubmit }: JobDescriptionFormProps) => {
   const [skills, setSkills] = useState("");
   const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleUpload = async (file: File, jobDescriptionId: number) => {
+    try {
+      await uploadResume(file, jobDescriptionId);
+      console.log("Resume uploaded to backend.");
+    } catch (error) {
+      console.error("Error uploading resume:", error);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!title || !description || !skills) {
@@ -39,19 +48,30 @@ const JobDescriptionForm = ({ onSubmit }: JobDescriptionFormProps) => {
       location,
       requiredSkills: skills.split(",").map((skill) => skill.trim()),
     };
+    console.log("📤 Saving job description:", jobDescription);
 
-    onSubmit(jobDescription);
-    toast({
-      title: "Job description saved",
-      description: "Your job description has been saved successfully.",
-    });
+    try {
+      await saveJobDescription(jobDescription);
+      toast({
+        title: "Job description saved",
+        description: "Your job description has been saved successfully.",
+      });
+      onSubmit(jobDescription); // trigger job list refresh if needed
 
-    // Reset form
-    setTitle("");
-    setDepartment("");
-    setDescription("");
-    setLocation("");
-    setSkills("");
+      // Reset form
+      setTitle("");
+      setDepartment("");
+      setDescription("");
+      setLocation("");
+      setSkills("");
+    } catch (error) {
+      toast({
+        title: "Error saving job",
+        description: "Something went wrong while saving. Try again.",
+        variant: "destructive",
+      });
+      console.error("Error saving job:", error);
+    }
   };
 
   return (

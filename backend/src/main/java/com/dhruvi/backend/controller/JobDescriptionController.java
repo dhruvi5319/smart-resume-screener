@@ -4,7 +4,6 @@ import com.dhruvi.backend.dto.JobDescriptionRequest;
 import com.dhruvi.backend.model.JobDescription;
 import com.dhruvi.backend.repository.JobDescriptionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;

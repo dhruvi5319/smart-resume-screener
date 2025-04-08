@@ -30,7 +30,8 @@ const Login = ({ onLogin }: LoginProps) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email: email,
+          password: password, }),
       });
   
       console.log("📡 Login response status:", response.status);
@@ -41,8 +42,16 @@ const Login = ({ onLogin }: LoginProps) => {
   
       const data = await response.json();
       console.log("✅ Login successful. User data from backend:", data);
+      localStorage.setItem("token", data.token);
   
-      onLogin(data);
+      onLogin({
+        id: data.id,
+        email: data.email,
+        name: data.name,
+        token: data.token
+      });
+      
+      localStorage.setItem("user", JSON.stringify(data));
       navigate("/dashboard");
     } catch (error) {
       console.error("❌ Login error:", error);

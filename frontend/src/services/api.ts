@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { API_URL } from "@/config";
 import axios from "axios";
 
-const API_URL = "http://localhost:8080/api";
+
 
 // 🔐 Helper to attach Bearer token
 const getAuthHeaders = () => {
@@ -18,7 +19,7 @@ export const uploadResume = async (file: File, jobDescriptionId: string) => {
   formData.append("jobDescriptionId", jobDescriptionId); 
 
   try {
-    const response = await axios.post(`${API_URL}/resumes/upload`, formData, {
+    const response = await axios.post(`${API_URL}/api/resumes/upload`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
         ...getAuthHeaders(),

@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
 import { User } from "@/types";
+import { API_URL } from "@/config";
 
 interface LoginProps {
   onLogin: (userData: User) => void;
@@ -33,7 +34,7 @@ const Login = ({ onLogin }: LoginProps) => {
     console.log("🔐 Attempting login with:", { email: normalizedEmail, password });
 
     try {
-      const response = await fetch("http://localhost:8080/api/auth/login", {
+      const response = await fetch(`${API_URL}/api/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

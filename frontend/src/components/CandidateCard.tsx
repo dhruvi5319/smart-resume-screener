@@ -62,15 +62,10 @@ const CandidateCard = ({ candidate, onViewDetails }: CandidateCardProps) => {
             </div>
           </div>
 
-          {/* <div>
-            <h4 className="text-sm font-medium text-gray-500">Strengths</h4>
-            <ul className="mt-1 text-sm pl-5 list-disc">
-              {strengths.slice(0, 2).map((strength, index) => (
-                <li key={index}>{strength}</li>
-              ))}
-              {strengths.length > 2 && <li>...</li>}
-            </ul>
-          </div> */}
+          <div>
+            <h4 className="text-sm font-medium text-gray-500">Job Title</h4>
+            <p className="mt-1">{candidate.jobTitle}</p>
+          </div>
         </div>
       </CardContent>
       <Separator />

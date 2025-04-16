@@ -1,31 +1,117 @@
 
-Follow these steps:
+# 🧠 Smart Resume Screener
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+An AI-powered full-stack web application that analyzes resumes against job descriptions to help recruiters identify the best candidates based on skills, strengths, and overall match score.
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+## 🔧 Tech Stack
 
-# Step 3: Install the necessary dependencies.
-npm i
+- **Frontend:** React + TypeScript + Tailwind CSS
+- **Backend:** Spring Boot (Java)
+- **AI Layer:** FastAPI (Python) with NLP & OpenAI integration
+- **Database:** PostgreSQL / MongoDB
+- **Authentication:** JWT (JSON Web Token)
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+---
+
+## 📸 Features
+
+- Upload resume files (PDF/DOCX)
+- AI-driven resume analysis & skill extraction
+- Match score calculation vs job descriptions
+- Visualization of key metrics (skills, strengths, weaknesses)
+- Candidate filtering by job role & score
+- Authentication with JWT
+- Admin-friendly dashboard
+
+---
+
+## ⚙️ How to Run Locally
+
+### 1. Clone the Repository
+```bash
+git clone https://github.com/dhruvi5319/smart-resume-screener.git
+cd smart-resume-screener
+```
+
+### 2. Backend - Spring Boot
+```bash
+cd backend
+./mvnw spring-boot:run
+```
+
+### 3. Frontend - React
+```bash
+cd frontend
+npm install
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+### 4. AI Microservice - FastAPI
+```bash
+cd ai
+pip install -r requirements.txt
+uvicorn main:app --reload
+```
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+---
 
-## What technologies are used for this project?
+## 🔐 Demo Credentials
 
-This project is built with:
+| Role | Email | Password |
+|------|-------|----------|
+| Admin | admin@example.com | admin123 |
+| Recruiter | user@example.com | user123 |
 
-- Vite
-- TypeScript
-- React
-- Tailwind CSS
+---
+
+## 📦 API Endpoints
+
+### `POST /api/resumes/upload`
+Uploads a resume and analyzes it with AI.
+
+**Headers:**
+```
+Authorization: Bearer <token>
+```
+
+**Form-Data Body:**
+- `file`: resume.pdf
+- `jobDescriptionId`: job ID
+
+**Returns:** Candidate object with analysis details.
+
+---
+
+## 🧠 AI Analysis Output
+
+- `match_score`: 0-100%
+- `summary`: AI-generated summary of (fit+strength+weakness)
+- `skills`: extracted + matched
+- `education` / `experience`: structured data extraction
+
+---
+
+## 📂 Folder Structure
+
+```
+smart-resume-screener/
+├── backend/            # Spring Boot backend
+├── frontend/           # React UI
+├── ai-model/           # FastAPI AI service
+├── docs/               # Technical docs and diagrams
+└── README.md
+```
+
+---
+
+## 📢 Authors
+
+- [Dhruvi Rathod](https://github.com/dhruvi5319)
+
+---
+
+## ✅ Final Deliverables
+
+- ✅ Working full-stack application
+- ✅ Technical documentation (API + architecture)
+- ✅ Presentation deck with demo link and credentials

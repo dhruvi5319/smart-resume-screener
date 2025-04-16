@@ -13,6 +13,7 @@ import Register from "./pages/Register";
 import NotFound from "./pages/NotFound";
 import Navbar from "./components/Navbar";
 import CandidateDetails from "./pages/CandidateDetails";
+import { API_URL } from "./config";
 
 const queryClient = new QueryClient();
 
@@ -36,7 +37,7 @@ const App = () => {
   }, []);
 
   const handleLogin = async (email: string, password: string) => {
-    const response = await fetch("http://localhost:8080/api/auth/login", {
+    const response = await fetch(`${API_URL}/api/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
@@ -60,7 +61,7 @@ const App = () => {
   };
 
   const handleRegister = async (name: string, email: string, password: string) => {
-    const response = await fetch("http://localhost:8080/api/auth/signup", {
+    const response = await fetch(`${API_URL}/api/auth/signup`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name, email, password }),
@@ -72,7 +73,7 @@ const App = () => {
     }
   
     // Login after signup
-    const loginResponse = await fetch("http://localhost:8080/api/auth/login", {
+    const loginResponse = await fetch(`${API_URL}/api/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),

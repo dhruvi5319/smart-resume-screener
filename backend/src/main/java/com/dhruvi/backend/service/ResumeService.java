@@ -21,14 +21,14 @@ public class ResumeService {
     private static final Logger logger = LoggerFactory.getLogger(ResumeService.class);
 
     private final ResumeRepository resumeRepository;
-//     private final CandidateRepository candidateRepository;
+    private final CandidateRepository candidateRepository;
 
     public ResumeService(
             ResumeRepository resumeRepository,
             CandidateRepository candidateRepository
     ) {
         this.resumeRepository = resumeRepository;
-        // this.candidateRepository = candidateRepository;
+        this.candidateRepository = candidateRepository;
     }
 
     // ✅ Now takes JobDescription object instead of plain text
@@ -59,12 +59,13 @@ public class ResumeService {
                 new Skill("Spring Boot", 75, true),
                 new Skill("SQL", 70, false)
         ));
+        
 
         candidate.setExperience(List.of("Experience pending AI parsing"));
         candidate.setWeaknesses(List.of("None detected"));
 
-        // candidateRepository.save(candidate);
-        // logger.info("✅ Created candidate entry for: {}", candidate.getName());
+        candidateRepository.save(candidate);
+        logger.info("✅ Created candidate entry for: {}", candidate.getName());
 
         return savedResume;
     }

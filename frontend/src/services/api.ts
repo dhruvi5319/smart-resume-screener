@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { API_URL } from "@/config";
 import axios from "axios";
 
-const API_URL = "http://localhost:8080/api";
+
 
 // 🔐 Helper to attach Bearer token
 const getAuthHeaders = () => {
@@ -18,7 +19,7 @@ export const uploadResume = async (file: File, jobDescriptionId: string) => {
   formData.append("jobDescriptionId", jobDescriptionId); 
 
   try {
-    const response = await axios.post(`${API_URL}/resumes/upload`, formData, {
+    const response = await axios.post(`${API_URL}/api/resumes/upload`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
         ...getAuthHeaders(),
@@ -35,7 +36,7 @@ export const uploadResume = async (file: File, jobDescriptionId: string) => {
 // ✅ Save job description
 export const saveJobDescription = async (data: any) => {
   try {
-    const response = await axios.post(`${API_URL}/job-descriptions`, data, {
+    const response = await axios.post(`${API_URL}/api/job-descriptions`, data, {
       headers: {
         "Content-Type": "application/json",
         ...getAuthHeaders(),
@@ -51,7 +52,7 @@ export const saveJobDescription = async (data: any) => {
 // ✅ Fetch job descriptions
 export const fetchJobDescriptions = async () => {
   try {
-    const response = await axios.get(`${API_URL}/job-descriptions`, {
+    const response = await axios.get(`${API_URL}/api/job-descriptions`, {
       headers: getAuthHeaders(),
     });
     return response.data;
@@ -67,7 +68,7 @@ export const fetchCandidates = async () => {
   console.log("🧾 Token being sent in header:", headers.Authorization);
 
   try {
-    const response = await axios.get(`${API_URL}/resumes/candidates`, {
+    const response = await axios.get(`${API_URL}/api/resumes/candidates`, {
       headers,
     });
     return response.data;

@@ -1,0 +1,16 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Virtual environment folders
+bin/
+lib/
+include/
+share/
+
+# Environment variables
+.env
+
+# VS Code or IDE settings (optional)
+.vscode/
+*.code-workspace

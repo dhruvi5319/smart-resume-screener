@@ -1,0 +1,19 @@
+# Core NLP + Transformers
+transformers
+sentence-transformers
+torch
+
+# PDF & DOCX parsing
+pdfplumber
+python-docx
+pymupdf
+
+# Optional - REST API
+fastapi
+uvicorn
+
+# OpenAI SDK
+openai
+
+# Environment variable management
+python-dotenv

@@ -12,6 +12,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import NotFound from "./pages/NotFound";
 import Navbar from "./components/Navbar";
+import CandidateDetails from "./pages/CandidateDetails";
 
 const queryClient = new QueryClient();
 
@@ -97,9 +98,11 @@ const App = () => {
 
   const handleLogout = () => {
     setUser(null);
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-  };
+    // localStorage.removeItem("token");
+    // localStorage.removeItem("user");
+    localStorage.clear(); // if you're using localStorage
+    sessionStorage.clear(); // if you switch to sessionStorage
+   };
 
   if (isLoading) {
     return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
@@ -131,6 +134,10 @@ const App = () => {
                   <Register onRegister={(userData) => handleRegister(userData.name, userData.email, userData.password)} />
                 )
               } 
+            />
+            <Route
+              path="/candidate/:id"
+              element={user ? <CandidateDetails /> : <Navigate to="/login" replace />}
             />
             <Route path="*" element={<NotFound />} />
           </Routes>

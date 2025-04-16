@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { JobDescription } from "@/types";
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
-import { uploadResume, saveJobDescription } from "@/services/api";
+import {saveJobDescription } from "@/services/api";
 
 interface JobDescriptionFormProps {
   onSubmit: (job: Omit<JobDescription, "id" | "createdAt">) => void;
@@ -19,15 +19,6 @@ const JobDescriptionForm = ({ onSubmit }: JobDescriptionFormProps) => {
   const [location, setLocation] = useState("");
   const [skills, setSkills] = useState("");
   const { toast } = useToast();
-
-  const handleUpload = async (file: File, jobDescriptionId: number) => {
-    try {
-      await uploadResume(file, jobDescriptionId);
-      console.log("Resume uploaded to backend.");
-    } catch (error) {
-      console.error("Error uploading resume:", error);
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

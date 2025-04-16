@@ -35,7 +35,7 @@ public class AuthService {
     }
 
     public LoginResponse login(LoginRequest request) {
-        Optional<User> optionalUser = userRepository.findByEmail(request.getEmail());
+        Optional<User> optionalUser = userRepository.findByEmailIgnoreCase(request.getEmail());
         if (optionalUser.isEmpty()) {
             throw new RuntimeException("User not found");
         }

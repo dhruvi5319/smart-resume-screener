@@ -12,10 +12,10 @@ const getAuthHeaders = () => {
 };
 
 // ✅ Upload resume with job description ID
-export const uploadResume = async (file: File, jobDescriptionId: number) => {
+export const uploadResume = async (file: File, jobDescriptionId: string) => {
   const formData = new FormData();
   formData.append("file", file);
-  formData.append("jobDescriptionId", jobDescriptionId.toString());
+  formData.append("jobDescriptionId", jobDescriptionId); 
 
   try {
     const response = await axios.post(`${API_URL}/resumes/upload`, formData, {
@@ -61,15 +61,18 @@ export const fetchJobDescriptions = async () => {
   }
 };
 
-// ✅ Fetch uploaded candidates
+// ✅ Fetch uploaded candidates for logged-in user
 export const fetchCandidates = async () => {
+  const headers = getAuthHeaders();
+  console.log("🧾 Token being sent in header:", headers.Authorization);
+
   try {
-    const response = await axios.get(`${API_URL}/resumes/all`, {
-      headers: getAuthHeaders(),
+    const response = await axios.get(`${API_URL}/resumes/candidates`, {
+      headers,
     });
     return response.data;
   } catch (error) {
-    console.error("Failed to fetch candidates:", error);
+    console.error("❌ Failed to fetch candidates:", error);
     throw error;
   }
 };

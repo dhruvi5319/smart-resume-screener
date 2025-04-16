@@ -8,7 +8,14 @@ public class Skill {
     private int score;
     private boolean isMatch;
 
-    public Skill() {}
+    public Skill() {
+    }
+
+    public Skill(String name) {
+        this.name = name;
+        this.score = 0;         // Default score
+        this.isMatch = false;   // Default match status
+    }
 
     public Skill(String name, int score, boolean isMatch) {
         this.name = name;

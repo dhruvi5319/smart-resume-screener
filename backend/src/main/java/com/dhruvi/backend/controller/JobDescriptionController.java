@@ -16,7 +16,7 @@ public class JobDescriptionController {
 
     @Autowired
     private JobDescriptionRepository repository;
-   
+
     @PostMapping
     public JobDescription createJob(@RequestBody JobDescriptionRequest request) {
         JobDescription job = JobDescription.builder()

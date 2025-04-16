@@ -11,6 +11,7 @@ pymupdf
 # Optional - REST API
 fastapi
 uvicorn
+python-multipart
 
 # OpenAI SDK
 openai

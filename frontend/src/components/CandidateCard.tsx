@@ -29,7 +29,7 @@ const CandidateCard = ({ candidate, onViewDetails }: CandidateCardProps) => {
   };
 
   const skills = candidate.skills ?? [];
-  const strengths = candidate.strengths ?? [];
+  // const strengths = candidate.strengths ?? [];
 
   return (
     <Card className="h-full flex flex-col">
@@ -62,7 +62,7 @@ const CandidateCard = ({ candidate, onViewDetails }: CandidateCardProps) => {
             </div>
           </div>
 
-          <div>
+          {/* <div>
             <h4 className="text-sm font-medium text-gray-500">Strengths</h4>
             <ul className="mt-1 text-sm pl-5 list-disc">
               {strengths.slice(0, 2).map((strength, index) => (
@@ -70,7 +70,7 @@ const CandidateCard = ({ candidate, onViewDetails }: CandidateCardProps) => {
               ))}
               {strengths.length > 2 && <li>...</li>}
             </ul>
-          </div>
+          </div> */}
         </div>
       </CardContent>
       <Separator />

@@ -18,6 +18,10 @@ public class Resume {
     private String fileName;
 
     private String fileType;
+    
+    @Column(name = "job_description_text")
+    private String jobDescriptionText;
+
 
     @Lob
     private byte[] data;

@@ -35,16 +35,15 @@ export interface Skill {
 export interface Candidate {
   id: string;
   name: string;
-  matchScore: number;
+  email: string;
+  phone: string;
+  jobTitle: string;
   resumeId: string;
-  jobTitle?: string;  // Added jobTitle field
-  skills: Skill[];
-  experience: string[];
-  strengths: string[];
-  weaknesses: string[];
+  matchScore: number;
   education: string;
-  email?: string;
-  phone?: string;
+  summary: string;
+  experience: string[];
+  skills: Skill[];
 }
 
 export interface AuthState {

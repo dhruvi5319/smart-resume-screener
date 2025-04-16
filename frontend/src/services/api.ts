@@ -3,21 +3,29 @@ import axios from "axios";
 
 const API_URL = "http://localhost:8080/api";
 
+// 🔐 Helper to attach Bearer token
+const getAuthHeaders = () => {
+  const token = localStorage.getItem("token");
+  return {
+    Authorization: `Bearer ${token}`,
+  };
+};
+
 // ✅ Upload resume with job description ID
-export const uploadResume = async (file: File, jobDescriptionId: number) => {
+export const uploadResume = async (file: File, jobDescriptionId: string) => {
   const formData = new FormData();
   formData.append("file", file);
-  formData.append("jobDescriptionId", jobDescriptionId.toString());
+  formData.append("jobDescriptionId", jobDescriptionId); 
 
   try {
     const response = await axios.post(`${API_URL}/resumes/upload`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
+        ...getAuthHeaders(),
       },
     });
 
-    // Backend should return candidate object or filename
-    return response.data; // This will be candidate object or string
+    return response.data;
   } catch (error) {
     console.error("Resume upload failed:", error);
     throw error;
@@ -26,17 +34,45 @@ export const uploadResume = async (file: File, jobDescriptionId: number) => {
 
 // ✅ Save job description
 export const saveJobDescription = async (data: any) => {
-  return await axios.post(`${API_URL}/job-descriptions`, data);
+  try {
+    const response = await axios.post(`${API_URL}/job-descriptions`, data, {
+      headers: {
+        "Content-Type": "application/json",
+        ...getAuthHeaders(),
+      },
+    });
+    return response;
+  } catch (error) {
+    console.error("Failed to save job description:", error);
+    throw error;
+  }
 };
 
 // ✅ Fetch job descriptions
 export const fetchJobDescriptions = async () => {
-  const response = await axios.get(`${API_URL}/job-descriptions`);
-  return response.data;
+  try {
+    const response = await axios.get(`${API_URL}/job-descriptions`, {
+      headers: getAuthHeaders(),
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch job descriptions:", error);
+    throw error;
+  }
 };
 
-// ✅ Fetch uploaded candidates
+// ✅ Fetch uploaded candidates for logged-in user
 export const fetchCandidates = async () => {
-  const response = await axios.get(`${API_URL}/resumes/all`);
-  return response.data;
+  const headers = getAuthHeaders();
+  console.log("🧾 Token being sent in header:", headers.Authorization);
+
+  try {
+    const response = await axios.get(`${API_URL}/resumes/candidates`, {
+      headers,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("❌ Failed to fetch candidates:", error);
+    throw error;
+  }
 };

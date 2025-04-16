@@ -3,12 +3,18 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
-import { User } from "@/types";
 
 interface RegisterProps {
-  onRegister: (userData: User) => void;
+  onRegister: (userData: { name: string; email: string; password: string }) => Promise<void>;
 }
 
 const Register = ({ onRegister }: RegisterProps) => {
@@ -35,29 +41,13 @@ const Register = ({ onRegister }: RegisterProps) => {
     setIsLoading(true);
 
     try {
-      const response = await fetch("http://localhost:8080/api/auth/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Registration failed");
-      }
-
-      const loginResponse = await fetch("http://localhost:8080/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const data = await loginResponse.json();
-      onRegister(data);
+      await onRegister({ name, email, password });
       navigate("/dashboard");
-    } catch (error) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
       toast({
         title: "Registration failed",
-        description: "There was an error creating your account.",
+        description: error?.message || "There was an error creating your account.",
         variant: "destructive",
       });
     } finally {
@@ -69,7 +59,7 @@ const Register = ({ onRegister }: RegisterProps) => {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-brand-700">ResumeRadar</h1>
+          <h1 className="text-3xl font-bold text-brand-700">ScreenWise</h1>
           <p className="mt-2 text-gray-600">AI-powered resume analysis platform</p>
         </div>
 
@@ -86,15 +76,33 @@ const Register = ({ onRegister }: RegisterProps) => {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
-                <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                <Input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="password">Password</Label>
-                <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                <Input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="confirmPassword">Confirm Password</Label>
-                <Input id="confirmPassword" type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
+                <Input
+                  id="confirmPassword"
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                />
               </div>
               <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading ? "Creating account..." : "Create account"}
@@ -103,7 +111,10 @@ const Register = ({ onRegister }: RegisterProps) => {
           </CardContent>
           <CardFooter>
             <p className="text-center text-sm text-gray-600 w-full">
-              Already have an account? <Link to="/login" className="font-medium text-brand-600 hover:text-brand-500">Sign in</Link>
+              Already have an account?{" "}
+              <Link to="/login" className="font-medium text-brand-600 hover:text-brand-500">
+                Sign in
+              </Link>
             </p>
           </CardFooter>
         </Card>

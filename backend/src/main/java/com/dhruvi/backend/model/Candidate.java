@@ -16,6 +16,8 @@ public class Candidate {
     private String resumeId;
     private int matchScore;
     private String education;
+    @Column(length = 5000) // Optional: allow long summaries
+    private String summary;
 
     @ElementCollection
     private List<String> experience;
@@ -29,6 +31,10 @@ public class Candidate {
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "candidate_skills", joinColumns = @JoinColumn(name = "candidate_id"))
     private List<Skill> skills;
+    
+    @ManyToOne
+    @JoinColumn(name = "uploaded_by")
+    private User uploadedBy;
 
     // Getters & Setters
 
@@ -127,4 +133,19 @@ public class Candidate {
     public void setSkills(List<Skill> skills) {
         this.skills = skills;
     }
+    public String getSummary() {
+        return summary;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
+    public User getUploadedBy() {
+        return uploadedBy;
+    }
+    
+    public void setUploadedBy(User uploadedBy) {
+        this.uploadedBy = uploadedBy;
+    }
+
 }

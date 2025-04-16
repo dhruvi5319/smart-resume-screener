@@ -16,6 +16,7 @@ const Navbar = ({ isAuthenticated, onLogout, user }: NavbarProps) => {
 
   const handleLogout = () => {
     onLogout();
+    localStorage.removeItem("token");
     navigate("/login");
   };
 
@@ -25,7 +26,7 @@ const Navbar = ({ isAuthenticated, onLogout, user }: NavbarProps) => {
         <div className="flex justify-between items-center h-16 w-full">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
-            <img src="/logo.png" alt="ScreenWise Logo" className="h-6 w-6" />
+            <img src="/ScreenWise-logo.png" alt="ScreenWise Logo" className="h-6 w-6" />
             <span className="text-indigo-700 font-extrabold text-2xl">ScreenWise</span>
           </Link>
 

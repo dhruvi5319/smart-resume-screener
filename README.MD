@@ -8,7 +8,7 @@ An AI-powered full-stack web application that analyzes resumes against job descr
 - **Frontend:** React + TypeScript + Tailwind CSS
 - **Backend:** Spring Boot (Java)
 - **AI Layer:** FastAPI (Python) with NLP & OpenAI integration
-- **Database:** PostgreSQL / MongoDB
+- **Database:** PostgreSQL
 - **Authentication:** JWT (JSON Web Token)
 
 ---
@@ -57,10 +57,9 @@ uvicorn main:app --reload
 
 ## 🔐 Demo Credentials
 
-| Role | Email | Password |
-|------|-------|----------|
-| Admin | admin@example.com | admin123 |
-| Recruiter | user@example.com | user123 |
+| Email | Password |
+|-------|----------|
+| dhruvi@gmail.com | 12345678 |
 
 ---
 
@@ -98,7 +97,7 @@ smart-resume-screener/
 ├── backend/            # Spring Boot backend
 ├── frontend/           # React UI
 ├── ai-model/           # FastAPI AI service
-├── docs/               # Technical docs and diagrams
+├── docs/               # Technical docs and presentation
 └── README.md
 ```
 

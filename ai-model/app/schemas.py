@@ -16,6 +16,6 @@ class AnalyzeResponse(BaseModel):
     fit_percentage: float
     summary: str
     extracted_skills: List[SkillScore]
-    education: str
+    education: List[str]
     experience: List[str]
     relevant_keywords: List[str]

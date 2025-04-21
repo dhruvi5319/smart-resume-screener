@@ -27,4 +27,7 @@ public class JobDescription {
     private String description;
 
     private LocalDateTime createdAt;
+    public String getRequiredSkillsCsv() {
+        return requiredSkills != null ? String.join(",", requiredSkills) : "";
+    }
 }

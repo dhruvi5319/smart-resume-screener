@@ -16,7 +16,7 @@ public class AIAnalysisResponse {
     @JsonProperty("extracted_skills")
     private List<SkillScore> extractedSkills;
 
-    private String education;
+    private List<String>  education;
     private List<String> experience;
 
     @JsonProperty("relevant_keywords")
@@ -36,8 +36,8 @@ public class AIAnalysisResponse {
     public List<SkillScore> getExtractedSkills() { return extractedSkills; }
     public void setExtractedSkills(List<SkillScore> extractedSkills) { this.extractedSkills = extractedSkills; }
 
-    public String getEducation() { return education; }
-    public void setEducation(String education) { this.education = education; }
+    public List<String> getEducation() { return education; }
+    public void setEducation(List<String> education) { this.education = education; }
 
     public List<String> getExperience() { return experience; }
     public void setExperience(List<String> experience) { this.experience = experience; }

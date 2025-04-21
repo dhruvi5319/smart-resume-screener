@@ -1,6 +1,7 @@
 package com.dhruvi.backend.service;
 
 import com.dhruvi.backend.model.Resume;
+import com.dhruvi.backend.dto.AIAnalysisResponse;
 import com.dhruvi.backend.model.Candidate;
 import com.dhruvi.backend.model.Skill;
 import com.dhruvi.backend.model.JobDescription;
@@ -22,17 +23,22 @@ public class ResumeService {
 
     private final ResumeRepository resumeRepository;
     private final CandidateRepository candidateRepository;
+    private final AIService aiService;
 
     public ResumeService(
             ResumeRepository resumeRepository,
-            CandidateRepository candidateRepository
+            CandidateRepository candidateRepository,
+            AIService aiService
     ) {
         this.resumeRepository = resumeRepository;
         this.candidateRepository = candidateRepository;
+        this.aiService = aiService;
     }
 
     // ✅ Now takes JobDescription object instead of plain text
     public Resume saveResume(MultipartFile file, JobDescription job) throws Exception {
+        AIAnalysisResponse aiResponse = aiService.analyze(file, job.getDescription(), job.getRequiredSkillsCsv());
+
         Resume resume = Resume.builder()
                 .fileName(file.getOriginalFilename())
                 .fileType(file.getContentType())
@@ -52,8 +58,7 @@ public class ResumeService {
         candidate.setResumeId(savedResume.getFileName());
         candidate.setJobTitle(job.getTitle());
         candidate.setMatchScore((int)(Math.random() * 40 + 60)); // random score for placeholder
-        candidate.setEducation("Pending AI analysis");
-
+        candidate.setEducation(aiResponse.getEducation());
         candidate.setSkills(List.of(
                 new Skill("Java", 80, true),
                 new Skill("Spring Boot", 75, true),

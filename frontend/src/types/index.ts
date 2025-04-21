@@ -40,7 +40,7 @@ export interface Candidate {
   jobTitle: string;
   resumeId: string;
   matchScore: number;
-  education: string;
+  education: string[];
   summary: string;
   experience: string[];
   skills: Skill[];

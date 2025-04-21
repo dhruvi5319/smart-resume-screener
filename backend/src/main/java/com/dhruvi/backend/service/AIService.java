@@ -14,7 +14,6 @@ import java.io.IOException;
 @Service
 public class AIService {
 
-    // @Value("${ai.model.url:http://localhost:8000}")
     @Value("${ai.model.url:https://smart-resume-screener-production.up.railway.app}")
     private String aiUrl;
 
@@ -27,7 +26,7 @@ public class AIService {
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
         body.add("resume_file", new MultipartInputStreamFileResource(resumeFile.getInputStream(), resumeFile.getOriginalFilename()));
         body.add("job_description", jobDescriptionText);
-        body.add("required_skills", requiredSkillsCsv); // ✅ Add this
+        body.add("required_skills", requiredSkillsCsv);
 
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 

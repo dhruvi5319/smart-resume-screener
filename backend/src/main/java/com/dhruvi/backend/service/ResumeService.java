@@ -35,7 +35,6 @@ public class ResumeService {
         this.aiService = aiService;
     }
 
-    // ✅ Now takes JobDescription object instead of plain text
     public Resume saveResume(MultipartFile file, JobDescription job) throws Exception {
         AIAnalysisResponse aiResponse = aiService.analyze(file, job.getDescription(), job.getRequiredSkillsCsv());
 
@@ -43,13 +42,11 @@ public class ResumeService {
                 .fileName(file.getOriginalFilename())
                 .fileType(file.getContentType())
                 .data(file.getBytes())
-                .jobDescription(job) // 🔁 store reference to job
+                .jobDescription(job)
                 .build();
 
         Resume savedResume = resumeRepository.save(resume);
-        logger.info("✅ Saved resume file: {}", savedResume.getFileName());
 
-        // Create placeholder Candidate
         Candidate candidate = new Candidate();
         candidate.setId("candidate-" + UUID.randomUUID());
         candidate.setName(file.getOriginalFilename());
@@ -57,21 +54,19 @@ public class ResumeService {
         candidate.setPhone("(000) 000-0000");
         candidate.setResumeId(savedResume.getFileName());
         candidate.setJobTitle(job.getTitle());
-        candidate.setMatchScore((int)(Math.random() * 40 + 60)); // random score for placeholder
+        candidate.setMatchScore((int) aiResponse.getMatchScore());
+        candidate.setSummary(aiResponse.getSummary());
         candidate.setEducation(aiResponse.getEducation());
-        candidate.setSkills(List.of(
-                new Skill("Java", 80, true),
-                new Skill("Spring Boot", 75, true),
-                new Skill("SQL", 70, false)
-        ));
-        
+        candidate.setExperience(aiResponse.getExperience());
 
-        candidate.setExperience(List.of("Experience pending AI parsing"));
-        candidate.setWeaknesses(List.of("None detected"));
+        List<Skill> skills = aiResponse.getExtractedSkills().stream()
+            .map(s -> new Skill(s.getName(), s.getScore(), s.isMatch()))
+            .toList();
+
+        candidate.setSkills(skills);
+        candidate.setWeaknesses(List.of("Auto-extracted from AI"));
 
         candidateRepository.save(candidate);
-        logger.info("✅ Created candidate entry for: {}", candidate.getName());
-
         return savedResume;
     }
 }

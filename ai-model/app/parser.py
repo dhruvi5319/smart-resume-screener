@@ -5,26 +5,59 @@ from docx import Document
 import fitz  # PyMuPDF
 from io import BytesIO
 
-def extract_education(text: str) -> str:
+def extract_education(text: str) -> List[str]:
+    education_lines = []
+    lines = text.split('\n')
+    capture = False
+
+    for line in lines:
+        line = line.strip()
+        # Start capturing after detecting Education section
+        if re.search(r"education", line, re.IGNORECASE):
+            capture = True
+            continue
+        if capture:
+            # Stop capturing at next major section
+            if re.search(r"(experience|skills|projects|certifications|technical)", line, re.IGNORECASE):
+                break
+            if line:  # Skip empty lines
+                education_lines.append(line)
+
+    combined = " ".join(education_lines)
+    
     patterns = [
-        r"(Bachelor(?:'s)? of [A-Za-z\s]+)",
-        r"(Master(?:'s)? of [A-Za-z\s]+)",
-        r"(B\.?Tech|M\.?Tech|B\.?Sc|M\.?Sc|Ph\.?D)",
-        r"(B\.?E|M\.?E|MBA|BBA)"
+        r"(Masters? in [A-Za-z\s]+)",
+        r"(Bachelors? in [A-Za-z\s]+)",
+        r"(Bachelor(?:'s)?(?: of| in)? [A-Za-z\s&]+)",
+        r"(Master(?:'s)?(?: of| in)? [A-Za-z\s&]+)",
+        r"(B\.?Tech|M\.?Tech|B\.?Sc|M\.?Sc|MBA|BBA|BCA|MCA)",
+        r"(High School Diploma|Higher Secondary|10th Grade|12th Grade)",
+        r"(Diploma(?: in [A-Za-z &]+)?)"
     ]
+
+    results = set()
     for pattern in patterns:
-        match = re.search(pattern, text, re.IGNORECASE)
-        if match:
-            return match.group(0)
-    return "Not mentioned"
+        for match in re.findall(pattern, combined, re.IGNORECASE):
+            results.add(match.strip())
+
+    return list(results) if results else ["Education not explicitly mentioned"]
 
 def extract_experience(text: str) -> List[str]:
-    experience = []
+    experience_lines = []
     lines = text.split("\n")
+    capture = False
+
     for line in lines:
-        if re.search(r"\b(experience|worked|internship|project)\b", line, re.IGNORECASE):
-            experience.append(line.strip())
-    return experience or ["Experience not explicitly mentioned"]
+        line = line.strip()
+        if re.search(r"(experience|professional background|employment history)", line, re.IGNORECASE):
+            capture = True
+            continue
+        if capture:
+            if line == "" or re.match(r"^(education|skills|projects|certifications)", line, re.IGNORECASE):
+                break
+            experience_lines.append(line)
+
+    return experience_lines if experience_lines else ["Experience not explicitly mentioned"]
 
 def extract_text_from_file(file: UploadFile) -> str:
     content = file.file.read()
@@ -49,4 +82,4 @@ def extract_text_from_pdf_bytes(pdf_bytes: bytes) -> str:
 
 def extract_text_from_docx_bytes(docx_bytes: bytes) -> str:
     doc = Document(BytesIO(docx_bytes))
-    return "\n".join(para.text for para in doc.paragraphs)
+    return "\n".join(para.text for para in doc.paragraphs if para.text.strip())

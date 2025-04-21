@@ -1,6 +1,5 @@
 package com.dhruvi.backend.controller;
 
-import com.dhruvi.backend.dto.AIAnalysisRequest;
 import com.dhruvi.backend.dto.AIAnalysisResponse;
 import com.dhruvi.backend.dto.MatchRequest;
 import com.dhruvi.backend.dto.MatchResponse;

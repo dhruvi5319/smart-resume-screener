@@ -15,7 +15,7 @@ public class Candidate {
     private String jobTitle;
     private String resumeId;
     private int matchScore;
-    private String education;
+    private List<String> education;
     @Column(length = 5000) // Optional: allow long summaries
     private String summary;
 
@@ -94,11 +94,11 @@ public class Candidate {
         this.matchScore = matchScore;
     }
 
-    public String getEducation() {
+    public List<String> getEducation() {
         return education;
     }
 
-    public void setEducation(String education) {
+    public void setEducation(List<String> education) {
         this.education = education;
     }
 

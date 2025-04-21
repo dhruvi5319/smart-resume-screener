@@ -14,6 +14,7 @@ interface ResumeUploaderProps {
 
 const ResumeUploader = ({ jobDescriptions = [], onUploadSuccess }: ResumeUploaderProps) => {
   const [isDragging, setIsDragging] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [selectedJob, setSelectedJob] = useState<JobDescription | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -63,20 +64,27 @@ const ResumeUploader = ({ jobDescriptions = [], onUploadSuccess }: ResumeUploade
       return;
     }
 
+    setIsUploading(true);
+
     try {
       const candidate = await uploadResume(selectedFile, String(selectedJob.id));
       toast({ title: "Upload Successful", description: "Candidate analyzed successfully." });
       onUploadSuccess(candidate);
       setSelectedFile(null);
+      setSelectedJob(null); // optional: clear job selection
     } catch (error) {
       toast({ title: "Upload Failed", description: "Something went wrong.", variant: "destructive" });
       console.error("Upload failed:", error);
+    } finally {
+      setIsUploading(false);
     }
   };
 
   return (
     <Card className="w-full bg-gradient-to-br from-white to-blue-50 border-blue-100 shadow-md">
-      <CardHeader><CardTitle>Upload Resume</CardTitle></CardHeader>
+      <CardHeader>
+        <CardTitle>Upload Resume</CardTitle>
+      </CardHeader>
       <CardContent>
         <div
           className={`drop-zone ${isDragging ? "active" : ""}`}
@@ -105,10 +113,12 @@ const ResumeUploader = ({ jobDescriptions = [], onUploadSuccess }: ResumeUploade
         {jobDescriptions.length > 0 && (
           <div className="mt-6">
             <Label>Select Job Description</Label>
-            <Select onValueChange={(value) => {
-              const job = jobDescriptions.find(j => j.id.toString() === value);
-              setSelectedJob(job || null);
-            }}>
+            <Select
+              onValueChange={(value) => {
+                const job = jobDescriptions.find(j => j.id.toString() === value);
+                setSelectedJob(job || null);
+              }}
+            >
               <SelectTrigger><SelectValue placeholder="Choose a job" /></SelectTrigger>
               <SelectContent>
                 {jobDescriptions.map((job) => (
@@ -123,7 +133,13 @@ const ResumeUploader = ({ jobDescriptions = [], onUploadSuccess }: ResumeUploade
 
         {selectedFile && (
           <div className="mt-6 text-right">
-            <Button onClick={handleUploadClick}>Upload Resume</Button>
+            <Button
+              onClick={handleUploadClick}
+              disabled={!selectedFile || !selectedJob || isUploading}
+              className={`${(!selectedFile || !selectedJob || isUploading) ? "opacity-50 cursor-not-allowed" : ""}`}
+            >
+              {isUploading ? "Uploading..." : "Upload Resume"}
+            </Button>
           </div>
         )}
       </CardContent>

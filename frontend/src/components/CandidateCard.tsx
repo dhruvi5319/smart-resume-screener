@@ -45,7 +45,7 @@ const CandidateCard = ({ candidate, onViewDetails }: CandidateCardProps) => {
         <div className="space-y-4">
           <div>
             <h4 className="text-sm font-medium text-gray-500">Education</h4>
-            <p className="mt-1">{candidate.education}</p>
+            <p className="mt-1">{candidate.education?.join(', ')}</p>
           </div>
 
           <div>

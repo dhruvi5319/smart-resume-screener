@@ -15,6 +15,7 @@ public class Candidate {
     private String jobTitle;
     private String resumeId;
     private int matchScore;
+    @ElementCollection
     private List<String> education;
     @Column(length = 5000) // Optional: allow long summaries
     private String summary;

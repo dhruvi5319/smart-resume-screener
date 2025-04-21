@@ -16,7 +16,7 @@ public class AIAnalysisResponse {
     @JsonProperty("extracted_skills")
     private List<SkillScore> extractedSkills;
 
-    private List<String>  education;
+    private List<String> education;
     private List<String> experience;
 
     @JsonProperty("relevant_keywords")
@@ -45,7 +45,6 @@ public class AIAnalysisResponse {
     public List<String> getRelevantKeywords() { return relevantKeywords; }
     public void setRelevantKeywords(List<String> relevantKeywords) { this.relevantKeywords = relevantKeywords; }
 
-    // Inner class for extracted_skills
     public static class SkillScore {
         private String name;
         private int score;

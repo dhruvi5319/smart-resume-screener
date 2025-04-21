@@ -21,7 +21,6 @@ An AI-powered full-stack web application that analyzes resumes against job descr
 - Visualization of key metrics (skills, strengths, weaknesses)
 - Candidate filtering by job role & score
 - Authentication with JWT
-- Admin-friendly dashboard
 
 ---
 

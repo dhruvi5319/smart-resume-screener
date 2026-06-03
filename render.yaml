@@ -1,0 +1,29 @@
+# Render Blueprint — https://render.com/docs/blueprint-spec
+# Deploys the Spring Boot backend. Frontend goes to Vercel; AI service goes to HF Spaces.
+
+services:
+  - type: web
+    name: smart-resume-screener-api
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    region: oregon
+    plan: free
+    envVars:
+      # Supabase / Neon Postgres connection string. Format:
+      #   jdbc:postgresql://HOST:PORT/DB?sslmode=require
+      - key: SPRING_DATASOURCE_URL
+        sync: false
+      - key: SPRING_DATASOURCE_USERNAME
+        sync: false
+      - key: SPRING_DATASOURCE_PASSWORD
+        sync: false
+
+      # Base64-encoded 32-byte secret. Generate with: openssl rand -base64 32
+      - key: APP_JWT_SECRET
+        sync: false
+
+      # URL of the Hugging Face Space serving the FastAPI AI service.
+      # Format: https://<user>-<space>.hf.space  (no trailing slash)
+      - key: AI_MODEL_URL
+        sync: false

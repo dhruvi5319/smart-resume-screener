@@ -14,7 +14,7 @@ import java.io.IOException;
 @Service
 public class AIService {
 
-    @Value("${ai.model.url:https://smart-resume-screener-production.up.railway.app}")
+    @Value("${ai.model.url:http://localhost:8000}")
     private String aiUrl;
 
     private final RestTemplate restTemplate = new RestTemplate();

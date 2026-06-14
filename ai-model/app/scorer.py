@@ -4,8 +4,15 @@ from .parser import (
     extract_experience,
     extract_text_from_file,
 )
-from .openai_summarizer import generate_summary
+import os
 from typing import List, Dict
+
+# Swap the summarizer via env flag: the fine-tuned local Llama (no API cost)
+# when USE_LOCAL_MODEL is set, otherwise the original GPT-3.5 path.
+if os.getenv("USE_LOCAL_MODEL", "false").lower() in ("1", "true", "yes"):
+    from .local_summarizer import generate_summary
+else:
+    from .openai_summarizer import generate_summary
 
 
 def compute_skill_scores(resume_text: str, jd_skills: List[str]) -> List[Dict]:

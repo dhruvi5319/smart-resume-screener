@@ -4,10 +4,12 @@ An AI-powered resume-to-job-description matcher for HR teams. Recruiters define 
 
 > The repo is `smart-resume-screener`; the user-facing product brand is **ScreenWise**.
 
-**Live demo:** _TODO: add the deployed frontend URL._
-**Deployed backend (Spring Boot, Railway):** `https://brave-liberation-production.up.railway.app`
-**Deployed AI service (FastAPI, Railway):** `https://smart-resume-screener-production.up.railway.app`
+**Live demo:** https://smart-resume-screener.vercel.app/dashboard
+**Deployed backend (Spring Boot, Render):** `https://smart-resume-screener-api-hif3.onrender.com`
+**Deployed AI service (FastAPI, Hugging Face Spaces):** `https://dhruvi5319-smart-resume-screener-ai.hf.space`
 **Demo access:** Contact [the author](https://github.com/dhruvi5319) for credentials.
+
+> Note: backend and AI service run on free tiers that sleep after inactivity — the first request after idle can take 30–60s to wake (and the first resume analysis may take longer while the model loads).
 
 <!-- TODO: replace with a real screenshot or GIF of the upload + results flow. -->
 ![ScreenWise dashboard](docs/images/dashboard.png)
@@ -146,9 +148,9 @@ _TODO (Week 1 roadmap task): build a small eval set of 10 hand-scored resume / j
 | Frontend | React 18, Vite, TypeScript, Tailwind CSS, shadcn/ui (Radix), TanStack Query, React Router 6, axios, Recharts, react-hook-form + zod, sonner |
 | Backend (API + auth + orchestration) | Spring Boot 3.4.4, Java 17, Spring Security, Spring Data JPA, Hibernate, JJWT 0.11.5, Lombok |
 | AI service | FastAPI, sentence-transformers (`all-MiniLM-L6-v2`), PyTorch, PyMuPDF (`fitz`), python-docx, OpenAI Python SDK, python-dotenv |
-| Database | PostgreSQL (Railway-hosted in production) |
+| Database | PostgreSQL (Supabase-hosted in production, via the session pooler) |
 | Auth | HS256 JWT bearer tokens, 1-hour expiration (`app.jwt.expiration=3600000`); password hashing with BCrypt |
-| Deployment | Both backend and AI service deployed on Railway; frontend deployment TODO |
+| Deployment | Frontend on Vercel, backend on Render, AI service on Hugging Face Spaces, database on Supabase |
 
 ---
 
@@ -232,7 +234,7 @@ uvicorn app.main:app --reload --port 8000
 
 The first request downloads the `all-MiniLM-L6-v2` model (~90 MB) into the sentence-transformers cache.
 
-By default, the Spring Boot `AIService` calls the production AI URL on Railway. To point it at your local FastAPI, set `ai.model.url=http://localhost:8000` in `application.properties` (or as an env var).
+The Spring Boot `AIService` reads the AI service URL from the `AI_MODEL_URL` env var (mapped to `ai.model.url`), defaulting to `http://localhost:8000` for local development. In production it points at the Hugging Face Space.
 
 ### 4. Frontend — React + Vite
 
@@ -288,7 +290,7 @@ The roadmap explicitly says *don't refactor; just surface what exists.* This sec
 
 ### Security
 
-- **`backend/src/main/resources/application.properties`** contains a hardcoded production Railway Postgres URL with username and password (lines 11–13), plus a hardcoded `app.jwt.secret` (line 31). **Rotate both, move to environment variables, and purge from git history.**
+- **Database/JWT secrets are now read from environment variables** (`SPRING_DATASOURCE_*`, `APP_JWT_SECRET`) rather than hardcoded in `application.properties`. ⚠️ The previously committed Railway credentials and JWT secret still exist in git history — rotate them (and ideally purge from history) since old commits remain exposed.
 - `SecurityConfig.java:34–38` matches `/api/**` as `permitAll()`, which makes the JWT filter advisory rather than enforcing. The filter still parses the token and populates `SecurityContextHolder` when one is present, so endpoints like `/api/resumes/upload` that cast `authentication.getPrincipal()` to `User` will NPE on unauthenticated requests rather than 401. Either tighten the matchers to only allow `/api/auth/**`, or guard the controller code.
 - `CORS` is `*` everywhere (backend `SecurityConfig` and FastAPI `main.py`).
 - `services/api.ts:68` and `pages/Login.tsx:63,71` log the JWT bearer token to the browser console.
@@ -305,7 +307,7 @@ The roadmap explicitly says *don't refactor; just surface what exists.* This sec
 
 ## Project status
 
-Working full-stack application with both the Spring Boot backend and the FastAPI AI service deployed on Railway. Next milestones (per the AI engineer roadmap): build a Ragas-based evaluation harness, add a cross-encoder re-ranking layer, and compare `all-MiniLM-L6-v2` against `all-mpnet-base-v2` on a structured eval set.
+Working full-stack application deployed across free tiers: frontend on Vercel, Spring Boot backend on Render, FastAPI AI service on Hugging Face Spaces, and PostgreSQL on Supabase. Next milestones (per the AI engineer roadmap): build a Ragas-based evaluation harness, add a cross-encoder re-ranking layer, and compare `all-MiniLM-L6-v2` against `all-mpnet-base-v2` on a structured eval set.
 
 ## Author
 
